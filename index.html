@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trap Letters</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <main class="game-area">
+            <section id="setup-screen" class="screen active fade-in">
+                <header class="main-header">
+                    <h1 class="game-title">Trap Letters</h1>
+                    <p class="game-subtitle">Bluff & Letters</p>
+                </header>
+                <div class="card setup-card">
+                    <h2>Joueurs</h2>
+                    <div id="players-list" class="players-list">
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="new-player-name" placeholder="Nom du joueur" maxlength="12"
+                            autocomplete="off">
+                        <button id="add-player-btn" class="btn btn-icon" aria-label="Ajouter">+</button>
+                    </div>
+
+                    <div class="actions">
+                        <button id="start-game-btn" class="btn btn-primary btn-large" disabled>Lancer la partie</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SECTION JEU (Strictement séparée) ===== -->
+            <section id="screen-game" class="hidden">
+
+                <div id="scores-panel" class="scores-overlay">
+                    <ul id="scores-list" class="scores-row">
+                        <!-- Scores generated here -->
+                    </ul>
+                </div>
+
+                <div class="game-topbar">
+                    <button id="menu-btn" class="icon-btn" aria-label="Menu">☰</button>
+                    <div id="mode-title" class="mode-title">Mode</div>
+                    <div class="topbar-spacer"></div>
+                </div>
+
+                <!-- Menu Déroulant -->
+                <div id="menu-backdrop" class="menu-backdrop hidden"></div>
+                <div id="game-menu" class="game-menu hidden">
+                    <button id="menu-restart" class="menu-item">Recommencer</button>
+                    <button id="menu-quit" class="menu-item">Quitter la partie</button>
+                </div>
+
+                <div class="game-header-info">
+                    <div class="turn-indicator-neon">
+                        À <span id="current-player-name" class="player-highlight">Joueur</span> de jouer
+                    </div>
+                </div>
+
+                <div class="game-center-area">
+                    <div class="chain-container neon-box">
+                        <div id="current-chain" class="chain-text"></div>
+                        <span class="cursor">_</span>
+                    </div>
+                </div>
+
+                <!-- Bouton Challenge -->
+                <div class="action-area">
+                    <button id="challenge-btn" class="btn btn-danger btn-neon-action">
+                        <span class="gear-icon">⚙️</span> À QUOI TU PENSES ?
+                    </button>
+                </div>
+
+                <!-- Clavier -->
+                <div id="keyboard-area" class="keyboard-container"></div>
+
+                <!-- Challenge Modal -->
+                <div id="challenge-modal" class="modal hidden">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-box neon-modal">
+                        <h2>Challenge !</h2>
+                        <p id="challenge-question"></p>
+                        <input id="challenge-input" type="text" placeholder="Ton mot complet" autocomplete="off" />
+                        <div class="modal-actions">
+                            <button id="challenge-validate" class="btn btn-primary">Valider</button>
+                            <button id="challenge-cancel" class="btn btn-secondary">Annuler</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>
