@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trap Letters - Jeu de Mots</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <main class="game-area">
+            <!-- ===== ÉCRAN D'ACCUEIL ===== -->
+            <section id="setup-screen" class="screen active fade-in">
+                <header class="main-header">
+                    <div class="logo-container">
+                        <h1 class="game-title-large">⚡ TRAP LETTERS ⚡</h1>
+                        <p class="game-subtitle-large">Le Jeu de Bluff & Mots</p>
+                    </div>
+                </header>
+
+                <div class="card setup-card">
+                    <div class="setup-header">
+                        <h2>Ajoute les Joueurs</h2>
+                        <p class="setup-subtitle">Au minimum 2 joueurs</p>
+                    </div>
+
+                    <div style="display:flex; gap:8px; margin-bottom:12px; align-items:center;">
+                        <div style="font-weight:700; color:var(--text-secondary);">Mode:</div>
+                        <button id="mode-solo" class="btn btn-secondary">Solo</button>
+                        <button id="mode-duel" class="btn btn-secondary">Duel</button>
+                        <button id="mode-multi" class="btn btn-secondary">Multijoueur (4)</button>
+                        <button id="mode-custom" class="btn btn-secondary">Personnalisé</button>
+                    </div>
+
+                    <div id="players-list" class="players-list"></div>
+
+                    <div class="input-group">
+                        <input type="text" id="new-player-name" placeholder="🎮 Pseudo du joueur" maxlength="15"
+                            autocomplete="off">
+                        <button id="add-player-btn" class="btn btn-icon btn-secondary" aria-label="Ajouter">+</button>
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:8px;">
+                        <button id="add-bot-easy" class="btn btn-secondary" onclick="addAIPlayer && addAIPlayer('easy')" title="Ajouter un bot facile">+ Bot Facile</button>
+                        <button id="add-bot-normal" class="btn btn-secondary" onclick="addAIPlayer && addAIPlayer('normal')" title="Ajouter un bot normal">+ Bot Normal</button>
+                        <button id="add-bot-hard" class="btn btn-secondary" onclick="addAIPlayer && addAIPlayer('hard')" title="Ajouter un bot difficile">+ Bot Difficile</button>
+                    </div>
+
+                    <div id="leaderboard-panel" style="margin-top:12px;">
+                        <h3 style="margin-bottom:8px; color:var(--neon-green);">🏆 Classement</h3>
+                        <ol id="leaderboard-list" style="color:var(--text-secondary); padding-left:18px;"></ol>
+                    </div>
+                    <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+                        <input id="online-leaderboard-url" placeholder="URL classement en ligne (optionnel)" style="flex:1; padding:8px; border-radius:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.03); color:var(--text-primary);" />
+                        <button id="btn-fetch-online" class="btn btn-secondary">Charger</button>
+                        <button id="btn-push-online" class="btn btn-primary">Publier</button>
+                    </div>
+                    <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+                        <input id="file-dict-full" type="file" accept=".txt" style="flex:1;" />
+                        <button id="btn-load-dict" class="btn btn-secondary">Charger dictionnaire local</button>
+                    </div>
+
+                    <div class="game-rules">
+                        <h3>📋 Règles du Jeu</h3>
+                        <ul>
+                            <li>Chaque joueur ajoute une lettre à tour de rôle</li>
+                            <li>Si tu complètes un mot existant, tu reçois une pénalité</li>
+                            <li>Tu peux challenger si tu doutes du mot en tête du joueur</li>
+                            <li>Celui avec le moins de pénalités gagne !</li>
+                        </ul>
+                    </div>
+
+                    <div class="actions">
+                        <button id="start-game-btn" class="btn btn-primary btn-large" disabled>🚀 Lancer la Partie</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== ÉCRAN DE JEU ===== -->
+            <section id="screen-game" class="hidden">
+
+                <!-- Top Bar -->
+                <div class="game-topbar">
+                    <button id="menu-btn" class="icon-btn" aria-label="Menu">☰</button>
+                    <div id="mode-title" class="mode-title">⚡ TRAP LETTERS</div>
+                    <div class="timer-display" id="timer-display">⏱️ 0s</div>
+                </div>
+
+                <!-- Menu Déroulant -->
+                <div id="menu-backdrop" class="menu-backdrop hidden"></div>
+                <div id="game-menu" class="game-menu hidden">
+                    <button id="menu-restart" class="menu-item">🔄 Recommencer</button>
+                    <button id="menu-quit" class="menu-item">❌ Quitter la partie</button>
+                    <hr style="border:none; height:1px; background:rgba(0,217,255,0.06); margin:8px 0;">
+                    <div style="padding:8px 12px; color:var(--text-secondary); font-weight:700;">Difficulté</div>
+                    <button id="diff-easy" class="menu-item">🟢 Facile (15)</button>
+                    <button id="diff-normal" class="menu-item">🟡 Normal (10)</button>
+                    <button id="diff-hard" class="menu-item">🔴 Difficile (5)</button>
+                </div>
+
+                <!-- Scores Panel -->
+                <div id="scores-panel" class="scores-overlay">
+                    <ul id="scores-list" class="scores-row"></ul>
+                </div>
+
+                <!-- Current Player Info -->
+                <div class="game-header-info">
+                    <div class="turn-indicator-neon">
+                        À <span id="current-player-name" class="player-highlight">Joueur</span> de jouer
+                    </div>
+                    <div id="message-area" class="message-area hidden"></div>
+                </div>
+
+                <!-- Chain Display -->
+                <div class="game-center-area">
+                    <div class="chain-info">
+                        <span class="chain-label">Chaîne actuelle :</span>
+                        <span id="chain-length" class="chain-length">(0 lettres)</span>
+                    </div>
+                    <div class="chain-container neon-box">
+                        <div id="current-chain" class="chain-text"></div>
+                        <span class="cursor">█</span>
+                    </div>
+                    <div class="chain-warning" id="chain-warning"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-area">
+                    <button id="delete-btn" class="btn btn-secondary" aria-label="Supprimer">← Retour</button>
+                    <button id="hint-btn" class="btn btn-secondary">💡 Indice</button>
+                    <button id="challenge-btn" class="btn btn-danger btn-neon-action">
+                        ⚔️ CHALLENGE
+                    </button>
+                </div>
+
+                <!-- Clavier -->
+                <div id="keyboard-area" class="keyboard-container"></div>
+
+                <!-- Challenge Modal -->
+                <div id="challenge-modal" class="modal hidden">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-box neon-modal">
+                        <h2>⚔️ Challenge !</h2>
+                        <p id="challenge-question"></p>
+                        <input id="challenge-input" type="text" placeholder="Ton mot complet" autocomplete="off" />
+                        <div class="modal-actions">
+                            <button id="challenge-validate" class="btn btn-primary">✓ Valider</button>
+                            <button id="challenge-cancel" class="btn btn-secondary">✕ Annuler</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Over Modal -->
+                <div id="game-over-modal" class="modal hidden">
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-box neon-modal game-over-box">
+                        <h2>🎉 Partie Terminée !</h2>
+                        <div id="winner-info" class="winner-info"></div>
+                        <ul id="final-scores" class="final-scores"></ul>
+                        <div class="modal-actions">
+                            <button id="play-again-btn" class="btn btn-primary">🔄 Nouvelle Partie</button>
+                            <button id="go-home-btn" class="btn btn-secondary">🏠 Accueil</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>
